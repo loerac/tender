@@ -1,0 +1,179 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<script>
+$(document).ready(function() {
+    $("#find_restaurants").click(function() {
+        $('.ui.modal.find').modal('show');
+    });
+
+    $("#connect_session").click(function() {
+        $('.ui.modal.connect').modal('show');
+    });
+
+    $("#search_restaurants").click(function() {
+        var loc = $("#user_location").val();
+        loc = loc.trim();
+        var fast_food = $("#fast_food").is(':checked');
+        var cafe = $("#cafe").is(':checked');
+        var bar = $("#bar").is(':checked');
+        var fine_dining = $("#fine_dining").is(':checked');
+        var cost_min = $("#cost_min").val();
+        var cost_max = $("#cost_max").val();
+        var distance = $("#distance").val();
+
+        $.ajax({
+            url: '/findRestaurants',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                "location": loc,
+                "restaurants": {
+                    "fast_food": fast_food,
+                    "cafe": cafe,
+                    "bar": bar,
+                    "fine_dining": fine_dining,
+                },
+                "cost": {
+                    "min": cost_min,
+                    "max": cost_max,
+                },
+                "distance": distance,
+            }),
+            dataType: 'json'
+        });
+
+        $('.ui.modal.find').modal('hide');
+    });
+
+    $("#connect_session_button").click(function() {
+        var code = $("#connect_session_code").val();
+        $.ajax({
+            url: '/connectSession',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                "connect_code": code,
+            }),
+            dataType: 'json'
+        });
+
+        $('.ui.modal.connect').modal('hide');
+    });
+});
+</script>
+
+<h2>Tender</h2>
+<p>To get started, click 'Find restaurants' to start a new session or click 'Connect with others' to start swiping away</p>
+
+<div class="ui divider"></div>
+
+<div class="ui buttons">
+  <button class="ui blue button large" id="find_restaurants">Find restaurants</button>
+  <div class="or"></div>
+  <button class="ui green button large" id="connect_session" >Connect with others</button>
+</div>
+
+<div class="ui modal connect">
+    <i class="close icon"></i>
+    <div class="header">
+        <div class="ui labeled input">
+            <a class="ui label">
+                Enter code
+            </a>
+            <input type="text" id="connect_session_code" placeholder="connect_session_code">
+        </div>
+    </div>
+
+    <div class="actions">
+        <div id="connect_session_button" class="ui positive right labeled icon button">
+            connect
+            <i class="plus icon"></i>
+        </div>
+    </div>
+</div>
+
+<div class="ui modal find">
+    <i class="close icon"></i>
+    <div class="header">
+        Enter info
+    </div>
+    <div class="content">
+        <div class="ui labeled input">
+            <a class="ui label">
+                Location
+            </a>
+            <input type="text" id="user_location" placeholder="Location">
+        </div>
+
+        <div class="ui divider"></div>
+
+        <div class="ui form">
+            <div class="grouped fields">
+            <label>Restaurant Categories</label>
+                <div class="field">
+                    <div class="ui slider checkbox">
+                        <input type="checkbox" id="fast_food" name="throughput" checked="checked">
+                        <label>Fast Food</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui slider checkbox">
+                        <input type="checkbox" id="cafe" name="throughput">
+                        <label>Cafe</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui slider checkbox">
+                        <input type="checkbox" id="bar" name="throughput">
+                        <label>Bar</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui slider checkbox checked">
+                        <input type="checkbox" id="fine_dining" name="throughput">
+                        <label>Fine Dining</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui divider"></div>
+
+        <div class="ui form">
+            <label>Cost (between 1 and 4)</label>
+            <div class="ui labeled input">
+                <a class="ui label">
+                    Min:
+                </a>
+                <input type="text" id="cost_min" placeholder="1" value="1">
+            </div>
+            <div class="ui labeled input">
+                <a class="ui label">
+                    Max:
+                </a>
+                <input type="text" id="cost_max" placeholder="4">
+            </div>
+        </div>
+
+        <div class="ui divider"></div>
+
+        <div class="ui form">
+            <div class="ui labeled input">
+                <a class="ui label">
+                    Distance:
+                </a>
+                <input type="text" id="distance" placeholder="100 km" value="100">
+            </div>
+        </div>
+
+    </div>
+    <div class="actions">
+        <div id="search_restaurants" class="ui positive right labeled icon button">
+            Search
+            <i class="plus icon"></i>
+        </div>
+    </div>
+</div>
+{% endblock %}

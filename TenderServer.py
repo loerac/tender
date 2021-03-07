@@ -29,12 +29,20 @@ class TenderServer:
     def CheckEvent(self):
         #while True:
         events = self.sel.select(timeout=None) #Possible hang up here. Need to do some testing. - HEF
+        works = [0]*5
+        keys = [0]*5
+        msgs = [0]*5
+        i = 0
         for key, mask in events:
             if key.data is None:
                 self.AcceptWrapper(key.fileobj)
-                return 0,key,'0'
+                works[i] = 0
+                keys[i] = key
+                msgs[i] = '0'
             else: 
-                return self.ServiceConnection(key, mask)
+                works[i],keys[i],msgs[i] = self.ServiceConnection(key, mask)
+            i += 1
+        return works,keys,msgs
                     
     #AcceptWrapper
     #Handle a new connection

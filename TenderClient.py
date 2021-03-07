@@ -45,7 +45,7 @@ class TenderClient:
     #Should be called often after the client sends a message.
     #Checks the read event, and if there is something, returns the message from the Server.
     def ReadFromSock(self):
-        events = self.sel.select(timeout=0.1)
+        events = self.sel.select(timeout=None)
         for key,mask in events:
             sock = key.fileobj
             data = key.data
